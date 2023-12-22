@@ -82,4 +82,74 @@ df.head()
 ```
 Function = Analyze can be done if the features are set into the same types. there are numerical features and categorical features. So, this code is to change categorical features into numerical features
 
-### C. Data Exploration
+### D. Modelling
+#### 1. Splitting Data
+```
+from sklearn.model_selection import train_test_split
+# Split the data
+X = df.drop('diabetes', axis=1)
+y = df['diabetes']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+Function = splitting data into 80% train - 20% test. Train data is used to make models, and test data is used to make prediction
+
+#### 2. Multilayer Perceptron
+```
+from sklearn.neural_network import MLPClassifier
+
+model = MLPClassifier(hidden_layer_sizes=(10,), activation='logistic', max_iter=1000, random_state=42)
+model.fit(X_train, y_train)
+```
+Function = analyze the data using Multilayer perceptron (MLP) using logistic activation function
+
+### 3. Predictions Data
+```
+y_prob = model.predict_proba(X_test)
+threshold = 0.5
+y_pred_binary = (y_prob[:, 1] > threshold).astype(int)
+print("Binary Predictions:")
+print(y_pred_binary)
+```
+Function = predictions values type is decimal. But, Y variables are categoric, contains 1 and 0 score. So, this code is to set prediction values into 1 and 0 scores
+
+```
+from sklearn.metrics import accuracy_score
+
+print("Binary Predictions:")
+print(y_pred_binary)
+
+accuracy = accuracy_score(y_test, y_pred_binary)
+print(f'Accuracy: {accuracy}')
+
+```
+Function =  To analyze the accuracy score
+
+### 4. Graphic True and False Predict
+```
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Assuming y_test is the true labels and y_pred_binary is the predicted labels
+
+# Count the number of correct predictions
+correct_predictions = np.sum(y_test.values == y_pred_binary)
+
+# Count the number of incorrect predictions
+incorrect_predictions = len(y_test) - correct_predictions
+
+# Plot the bar chart
+labels = ['Correct Predictions', 'Incorrect Predictions']
+values = [correct_predictions, incorrect_predictions]
+
+plt.bar(labels, values, color=['green', 'red'])
+plt.title('Correct vs Incorrect Predictions')
+plt.ylabel('Number of Samples')
+
+# Add labels to each bar
+for i in range(len(labels)):
+    plt.text(i, values[i] + 0.1, str(values[i]), ha='center', va='bottom')
+
+plt.show()
+```
+Function = to make bar chart that contains true and false predict values
+
